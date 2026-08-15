@@ -1,0 +1,6 @@
+# 忽略构建产物 / 依赖（不进 git、不进分发）
+skills/dashi-ppt/project/node_modules/
+skills/dashi-ppt/project/dist/
+skills/dashi-ppt/project/output/
+skills/dashi-ppt/.git/
+*.zip

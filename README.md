@@ -1,8 +1,8 @@
-# OPC 创业基础课 · 8 个 Skill 安装包
+# OPC 创业基础课 · 8+1 个 Skill 安装包
 
-**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块。
+**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块 + Dashi PPT（M7 路演 PPT 生成器）。
 
-## 包含的 Skill（v0.7 · 已对齐 2026-08 最新版）
+## 包含的 Skill（v0.8 · 已对齐 2026-08 最新版）
 
 | Skill | 模块 | 输入 → 输出 | 使用主体 |
 |-------|------|-------------|----------|
@@ -14,6 +14,7 @@
 | opc-m6-iteration | M6 迭代执行 | 测试反馈 → 人决策 → **V0.2 迭代说明 + 秒哒指令** | 个人 |
 | opc-m7-pitch | M7 路演生成 | 前序成果物 → **6 页路演 PPT**（整合 Dashi PPT） | 个人 |
 | opc-m8-assets | M8 资产整理 | M1–M7 → **HTML 项目档案 + 个人反思** | 个人 |
+| **dashi-ppt** | M7 配套 | **浏览器可编辑的 HTML 路演 PPT 生成器**（可导出 PPTX/PDF） | 个人 |
 
 ## 设计理念
 
@@ -24,28 +25,44 @@
 
 ## 快速安装（新电脑 / WorkBuddy）
 
-**方法一（推荐）**：解压后双击运行安装脚本
+### 方式一：从 GitHub 在线安装（推荐，无需手动解压 zip）
 
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/yangzhe1952/opc-entrepreneurship-basics-zingy/main/install.ps1 | iex"
+```
+
+或先下载 install.ps1 再执行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1 -Source github
+```
+
+常用参数：
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `-Source` | 安装源：`github`（在线）/ `local`（本地包） | `-Source github` |
+| `-Target` | 安装目标：`auto`（默认，agents+claude）/ `agents` / `claude` / `workbuddy` / `custom:<路径>` | `-Target workbuddy` |
+| `-WithDashi` | 是否初始化 dashi-ppt 依赖，默认开启 | `-WithDashi:$false` |
+
+### 方式二：下载 release zip 手动安装
+
+1. 下载最新 release 的 zip 并解压
+2. 运行 `install.ps1`：
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 ```
 
-- 默认（`-Target auto`）同时安装到 `~\.agents\skills` 和 `~\.claude\skills`
-- 只用 opencode：`-Target agents`
-- 只用 Claude Code：`-Target claude`
-- WorkBuddy / Marvis / 其他 Agent：skill 文件放在任意位置、读取 `SKILL.md` 即可——解压后把 `skills\` 里的 8 个文件夹放到你的 agent 的 skills 目录即可
+### 方式三：手动复制（任意 Agent / WorkBuddy）
 
-**方法二（手动）**：把 `skills\` 里的 8 个文件夹复制到对应 skills 目录即可。
+把 `skills\` 里的 9 个文件夹复制到你的 agent 的 skills 目录即可，重启生效。
 
-安装完成后**重启 opencode / Claude Code / WorkBuddy**，skill 生效。
+> 无论哪种方式：**dashi-ppt 首次使用会自动 `npm install` 依赖**（需要 Node 20+）；导出 PPTX/PDF 需要本机 Chrome/Edge。
 
-## 额外依赖
+## 环境要求
 
-- **M7 路演 PPT（Dashi PPT）**：`opc-m7-pitch` 会调用 `dashi-ppt` skill 生成浏览器可编辑的 HTML 路演 PPT。需单独安装：
-  ```
-  npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest
-  ```
-  （装到 `~/.agents/skills/dashi-ppt`；导出 PPTX/PDF 需本机 Chrome/Edge + Node 20+）
+- Node.js 20+ 和 npm（dashi-ppt 依赖）
+- Chrome / Chromium / Edge（导出 PPTX/PDF）
 - M1/M2/M3 需要 **WebSearch / WebFetch** 能力（联网检索真实数据）
 
 ## 来源
