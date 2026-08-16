@@ -12,7 +12,7 @@ $repo = "yangzhe1952/opc-entrepreneurship-basics-zingy"
 $skills = @(
     "opc-m1-track-analysis", "opc-m2-track-profile", "opc-m3-solution-design",
     "opc-m4-requirements", "opc-m5-ai-testing", "opc-m6-iteration",
-    "opc-m7-pitch", "opc-m8-assets", "dashi-ppt"
+    "opc-m7-pitch", "opc-m8-assets"
 )
 if ($Version -notmatch '^v\d') { throw "Version must start with 'v', e.g. v0.8" }
 if (-not (Test-Path -LiteralPath $gh)) { throw "gh not found at $gh" }
@@ -25,17 +25,9 @@ if (Test-Path -LiteralPath $srcRoot) {
         $from = Join-Path $srcRoot $s
         $to = Join-Path $pkg "skills\$s"
         if (Test-Path -LiteralPath $from) {
-            # dashi-ppt: 排除构建产物/依赖
-            $extraArgs = @()
-            if ($s -eq "dashi-ppt") { $extraArgs = @("/XD", "node_modules", "dist", "output", ".git") }
             if (Test-Path -LiteralPath $to) { Remove-Item -LiteralPath $to -Recurse -Force }
-            if ($extraArgs.Count -gt 0) {
-                robocopy $from $to /E $extraArgs /NFL /NDL /NJH /NJS | Out-Null
-                Write-Host "  synced $s (excl build artifacts)"
-            } else {
-                Copy-Item -LiteralPath $from -Destination $to -Recurse -Force
-                Write-Host "  synced $s"
-            }
+            Copy-Item -LiteralPath $from -Destination $to -Recurse -Force
+            Write-Host "  synced $s"
         }
     }
 } else {
@@ -58,7 +50,7 @@ Pop-Location
 
 # 4) create release with zip asset
 Write-Host "[4/4] creating GitHub release $Version ..."
-$notes = if ($Notes) { $Notes } else { "OPC 创业基础课 9 个 Skill 安装包（含 dashi-ppt）$Version" }
+$notes = if ($Notes) { $Notes } else { "OPC 创业基础课 8 个 Skill 安装包 $Version" }
 & $gh release create $Version -R $repo --title $Version --notes $notes $zip
 Write-Host ""
 Write-Host "DONE: https://github.com/$repo/releases/tag/$Version"

@@ -1,8 +1,8 @@
-# OPC 创业基础课 · 8+1 个 Skill 安装包
+# OPC 创业基础课 · 8 个 Skill 安装包
 
-**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块 + Dashi PPT（M7 路演 PPT 生成器）。
+**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块。
 
-## 包含的 Skill（v0.8 · 已对齐 2026-08 最新版）
+## 包含的 Skill（v0.9 · 已对齐 2026-08 最新版）
 
 | Skill | 模块 | 输入 → 输出 | 使用主体 |
 |-------|------|-------------|----------|
@@ -12,9 +12,10 @@
 | opc-m4-requirements | M4 需求梳理 | 产品任务书 → 10 题探索 → **八大字段需求文档**（可交秒哒） | 个人 |
 | opc-m5-ai-testing | M5 产品测试 | 产品链接 → AI 模拟测试 + **人测试** → **双源四象限测试报告** | 个人 |
 | opc-m6-iteration | M6 迭代执行 | 测试反馈 → 人决策 → **V0.2 迭代说明 + 秒哒指令** | 个人 |
-| opc-m7-pitch | M7 路演生成 | 前序成果物 → **6 页路演 PPT**（整合 Dashi PPT） | 个人 |
+| opc-m7-pitch | M7 路演生成 | 前序成果物 → **6 页路演 PPT**（生成时询问选 Dashi 或 WorkBuddy 自带） | 个人 |
 | opc-m8-assets | M8 资产整理 | M1–M7 → **HTML 项目档案 + 个人反思** | 个人 |
-| **dashi-ppt** | M7 配套 | **浏览器可编辑的 HTML 路演 PPT 生成器**（可导出 PPTX/PDF） | 个人 |
+
+> **一人一产品**：M1 小组共同选赛道；M2 起每人独立做自己的产品（Work alone together）。M1 赛道可行性标准为"一人当天能做出 V0.1"（秒哒等无代码平台 30 分钟可出原型）。
 
 ## 设计理念
 
@@ -43,7 +44,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1 -Source github
 |------|------|------|
 | `-Source` | 安装源：`github`（在线）/ `local`（本地包） | `-Source github` |
 | `-Target` | 安装目标：`auto`（默认，agents+claude）/ `agents` / `claude` / `workbuddy` / `custom:<路径>` | `-Target workbuddy` |
-| `-WithDashi` | 是否初始化 dashi-ppt 依赖，默认开启 | `-WithDashi:$false` |
 
 ### 方式二：下载 release zip 手动安装
 
@@ -55,15 +55,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 
 ### 方式三：手动复制（任意 Agent / WorkBuddy）
 
-把 `skills\` 里的 9 个文件夹复制到你的 agent 的 skills 目录即可，重启生效。
+把 `skills\` 里的 8 个文件夹复制到你的 agent 的 skills 目录即可，重启生效。
 
-> 无论哪种方式：**dashi-ppt 首次使用会自动 `npm install` 依赖**（需要 Node 20+）；导出 PPTX/PDF 需要本机 Chrome/Edge。
+## M7 路演 PPT：可选安装 Dashi PPT Skill
+
+`opc-m7-pitch` 生成 PPT 时会**先询问你选择哪种方式**：
+- **A. Dashi PPT Skill**（开源 PPT 生成器，浏览器可编辑、可导出 PPTX）——**按需下载，不随本包分发**
+- **B. WorkBuddy 自带的做 PPT Skill**（如环境已有）
+
+若选 A，在目标机器上运行（需要 Node 20+）：
+
+```powershell
+npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest
+```
+
+或手动安装：`https://github.com/chuspeeism/dashi-ppt-skill`
+
+导出 PPTX/PDF 需要本机 Chrome/Edge。
 
 ## 环境要求
 
-- Node.js 20+ 和 npm（dashi-ppt 依赖）
-- Chrome / Chromium / Edge（导出 PPTX/PDF）
 - M1/M2/M3 需要 **WebSearch / WebFetch** 能力（联网检索真实数据）
+- M7 选 Dashi 时：Node.js 20+ 和 npm；Chrome / Edge（导出 PPTX/PDF）
 
 ## 来源
 

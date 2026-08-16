@@ -18,8 +18,7 @@ param(
     [string]$Source = "local",
     [string]$Repo = "yangzhe1952/opc-entrepreneurship-basics-zingy",
     [string]$Branch = "main",
-    [string]$Target = "auto",
-    [switch]$WithDashi = $true
+    [string]$Target = "auto"
 )
 $ErrorActionPreference = "Stop"
 
@@ -31,8 +30,7 @@ $skills = @(
     "opc-m5-ai-testing",
     "opc-m6-iteration",
     "opc-m7-pitch",
-    "opc-m8-assets",
-    "dashi-ppt"
+    "opc-m8-assets"
 )
 
 # ---------- 解析安装目标目录 ----------
@@ -100,32 +98,13 @@ Write-Host "OPC skills installed: $installed folders across $($targets.Count) lo
 Write-Host "Restart opencode / Claude Code / WorkBuddy to load them."
 Write-Host ""
 
-# ---------- dashi-ppt 初始化（npm install） ----------
-if ($WithDashi) {
-    $project = Join-Path $HOME ".agents\skills\dashi-ppt\project"
-    if (-not (Test-Path -LiteralPath (Join-Path $project "package.json"))) {
-        $project = Join-Path $HOME ".claude\skills\dashi-ppt\project"
-    }
-    if (Test-Path -LiteralPath (Join-Path $project "package.json")) {
-        if (-not (Test-Path -LiteralPath (Join-Path $project "node_modules"))) {
-            Write-Host "==> 初始化 dashi-ppt 依赖（首次较慢）..."
-            Write-Host "    项目: $project"
-            if (Test-Path -LiteralPath (Join-Path $project "npmrc.template")) {
-                if (-not (Test-Path -LiteralPath (Join-Path $project ".npmrc"))) {
-                    Copy-Item -LiteralPath (Join-Path $project "npmrc.template") -Destination (Join-Path $project ".npmrc") -Force
-                }
-            }
-            Push-Location $project
-            npm install 2>&1 | ForEach-Object { Write-Host "    $_" }
-            Pop-Location
-            Write-Host "==> dashi-ppt 依赖安装完成。"
-        } else {
-            Write-Host "==> dashi-ppt 依赖已存在，跳过。"
-        }
-    } else {
-        Write-Host "警告: 未找到 dashi-ppt 项目，跳过依赖初始化。"
-    }
-}
+# ---------- dashi-ppt 说明（可选，不随包分发） ----------
+Write-Host ""
+Write-Host "==> 提示：M7 路演 PPT 如需用 Dashi PPT Skill（可选）"
+Write-Host "    该 skill 不随本包分发（压缩后不可用），在需要时单独下载："
+Write-Host "      npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest"
+Write-Host "    或 GitHub: https://github.com/chuspeeism/dashi-ppt-skill"
+Write-Host "    需要 Node 20+ 与 Chrome/Edge（导出 PPTX/PDF 时）。"
 
 # ---------- 清理 ----------
 Remove-Item -LiteralPath $tmpRoot -Recurse -Force -ErrorAction SilentlyContinue

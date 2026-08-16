@@ -2,13 +2,13 @@
 name: opc-m7-pitch
 description: >
   OPC 创业基础课 M7「路演生成」人机协同智能体（个人）。从 M2 HMW + M3 产品任务书 + M5 测试概要 + 三大资源出发，
-  经人机多轮交互（A 收集资源与合作诉求 → AI 生成六页大纲 → C 人逐段改写 → AI 出讲稿草稿 → C 人演练反馈 → D 人定稿），
-  产出**6 页路演 PPT**（首页/真实问题/解决方案/产品演示/创新价值/资源诉求，页数固定）+ 演讲稿底稿，
-  并用 **Dashi PPT Skill（dashi-ppt）** 生成浏览器可编辑的 HTML 路演 PPT（可导出 PPTX/PDF）。
+  经人机多轮交互  （A 收集资源与合作诉求 → AI 生成六页大纲 → C 人逐段改写 → AI 出讲稿草稿 → C 人演练反馈 → D 人定稿），
+  产出**6 页路演 PPT**（首页/真实问题/解决方案/产品演示/创新价值/资源诉求，页数固定）+ 演讲稿底稿。
+  生成 PPT 时**先询问用户选择方式**：A. Dashi PPT Skill（运行时从官方源下载，不随包分发）/ B. WorkBuddy 自带 PPT skill / 其它。
   核心理念：AI 只给大纲与要点，故事与语言必须是人的；AI 不得生成"可照读的成品讲稿"。
   适用于 OPC M7 路演、结课展示、双创比赛。
   触发：路演、PPT大纲、路演大纲、演讲稿、五段、M7、讲稿、做PPT。
-version: "2.0"
+version: "2.1"
 status: beta
 ---
 
@@ -109,27 +109,44 @@ status: beta
 
 人确认定稿。
 
-### Step 8 用 Dashi PPT 生成 HTML 路演 PPT（v2.0 核心）
+### Step 8 生成路演 PPT（v2.1：询问选择 + 按需下载）
 
-**先确认两件事**（Dashi PPT 开工规则）：
-1. **主题风格**：向用户展示 12 套风格，让用户选（或用户已指定）
-2. **是否需要图片/视频**：一般默认不需要（路演 PPT 用文字版式即可）
+**先询问用户选择哪种 PPT 生成方式**：
 
-**然后按 Dashi PPT Skill（`dashi-ppt`）工作流执行**：
+> 路演 PPT 你想用哪种方式生成？
+> - **A. Dashi PPT Skill**（GitHub 热门开源 PPT 生成器，浏览器可编辑、可导出 PPTX，12 套主题）
+> - **B. WorkBuddy 自带的做 PPT Skill**（如环境已有 pptx 生成 skill）
+> - 或其它你熟悉的方式
 
-1. 按 Dashi PPT 规则选版式：`layout:query` 查 6 个页面角色
-   - 首页（cover）、真实问题（statement/observation）、解决方案（process）、产品演示（metrics/data）、创新价值（comparison）、资源诉求（closing/actions）
-2. 构建 `goal.json`：**恰好 6 个 slide**，每页填对应文案（从 Step 6 定稿内容取）
-3. 运行 `props:safe` + `validate:goal-spec` 校验
-4. 渲染：`npm run render:goal` 输出 `output/<deck>/ppt/index.html`
-5. 运行 `validate:swiss` + `validate:goal-copy` 校验
-6. **启动预览服务**：`node <dashi-root>/scripts/start-preview-server.mjs <ppt目录> <端口>`，给用户 `http://127.0.0.1:<port>/`
-7. 提示可导出 **PPTX / PDF**（本机 Chrome/Edge 支持）
+**用户选 A（Dashi PPT）时，按需下载并执行**（**不预先嵌入/不随包分发**）：
 
-> ⚠️ **JSON 编码注意**：Windows 下用 PowerShell `Set-Content -Encoding UTF8` 会写 BOM 导致渲染失败。写 goal.json 必须用 **无 BOM 的 UTF-8**（用 write 工具或 `node -e` 清洗 `^\uFEFF`）。
+1. **检查是否已装**：`~/.agents/skills/dashi-ppt` 或 `~/.claude/skills/dashi-ppt` 是否存在
+2. **未装则下载**（运行时拉取官方源，不嵌入总包）：
+   ```powershell
+   npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest
+   ```
+   或从 GitHub 手动安装：
+   ```powershell
+   git clone https://github.com/chuspeeism/dashi-ppt-skill.git <skills目录>/dashi-ppt
+   cd <skills目录>/dashi-ppt && npm install
+   ```
+   （源码地址：`https://github.com/chuspeeism/dashi-ppt-skill`）
+3. **确认主题风格**：向用户展示 12 套风格让用户选（或用户已指定）
+4. **确认是否需要图片/视频**：一般默认不需要（路演 PPT 用文字版式即可）
+5. **按 Dashi PPT 工作流执行**：
+   - 选版式：`layout:query` 查 6 个页面角色（首页 cover / 真实问题 statement / 解决方案 process / 产品演示 metrics / 创新价值 comparison / 资源诉求 closing）
+   - 构建 `goal.json`：**恰好 6 个 slide**，每页填 Step 6 定稿内容
+   - `props:safe` + `validate:goal-spec` 校验
+   - 渲染：`npm run render:goal` 输出 `output/<deck>/ppt/index.html`
+   - `validate:swiss` + `validate:goal-copy` 校验
+   - 启动预览：`node <dashi-root>/scripts/start-preview-server.mjs <ppt目录> <端口>`
+   - 提示可导出 PPTX / PDF
+
+**用户选 B（WorkBuddy 自带 skill）或其它**：按其 skill 的工作流生成 PPT。
+
+> ⚠️ **JSON 编码注意**：Windows 下 PowerShell `Set-Content -Encoding UTF8` 会写 BOM 导致渲染失败。写 goal.json 必须用**无 BOM 的 UTF-8**（用 write 工具或 `node -e` 清洗 `^\uFEFF`）。
 > ⚠️ **页数硬性**：goal.json 恰好 6 个 slide，对应 §3 六页。
-
-**Dashi PPT 目录**：`C:\Users\杨哲\.agents\skills\dashi-ppt`（渲染脚本 `scripts\render_goal_deck.ps1` 或手动跑 `npm --prefix <project> run render:goal`）。
+> ⚠️ **不嵌入原则**：dashi-ppt **不随本 skill 包分发**（压缩后不可用），始终在需要时从官方源下载。
 
 ---
 
@@ -150,7 +167,7 @@ status: beta
 ## 时间提示与备用方案
 
 ---
-## Dashi PPT：output/<deck>/ppt/index.html + 预览 http://127.0.0.1:<port>/
+## PPT：按用户选择的方式生成（Dashi PPT 见 output/<deck>/ppt/index.html）
 ```
 
 ---
@@ -163,9 +180,9 @@ status: beta
 - [ ] 演练反馈真实影响了优化？
 - [ ] 三大资源用于支撑资源诉求，未单列"为什么是我"段？
 - [ ] **PPT 恰好 6 页**（首页 + 五段），未增未减？
-- [ ] Dashi PPT goal.json 用无 BOM UTF-8 编写？
-- [ ] Dashi PPT 渲染后通过 swiss + goal-copy 校验？
-- [ ] 预览服务已启动并给出 http://127.0.0.1:<port>/ 地址？
+- [ ] **已先询问用户选哪种 PPT 方式**（Dashi / WorkBuddy 自带 / 其它），未擅自决定？
+- [ ] 选 Dashi 时：未装则运行时下载官方源，**不嵌入本包**？
+- [ ] 选 Dashi 时：goal.json 用无 BOM UTF-8；渲染后通过 swiss + goal-copy 校验；已启动预览？
 - [ ] 最后一步由人定稿？
 
 ---
@@ -178,24 +195,26 @@ status: beta
 | 「演示动线」 | 出产品打开路径与备用方案 |
 | 「太长了」 | 压缩到时间线内 |
 | 「这不像我说的话」 | 交回人改写，AI 只整理结构 |
-| 「做 PPT / 生成 PPT」 | 调用 dashi-ppt 生成 6 页 HTML PPT 并启动预览 |
-| 「导出 PPTX」 | 用 dashi-ppt 的导出（HTTP 导出接口或 export:pptx）|
-| 「换主题风格」 | 重新用 dashi-ppt 选风格重渲染 |
+| 「做 PPT / 生成 PPT」 | **先询问方式**（Dashi / WorkBuddy 自带 / 其它），再按所选生成 6 页 PPT |
+| 「用 Dashi PPT」 | 检查/下载 dashi-ppt-skill（官方源）→ 生成 6 页 HTML PPT 并启动预览 |
+| 「导出 PPTX」 | 用所选工具的导出能力（Dashi 用 HTTP 导出接口或 export:pptx）|
+| 「换主题风格」 | 重新用所选工具换风格重渲染 |
 
 ---
 
 ## 8. Depends on
 
 - `opc-m2-track-profile`（HMW）、`opc-m3-solution-design`（产品任务书）、`opc-m5-ai-testing`（测试概要）
-- **`dashi-ppt`**（Dashi PPT Skill，v0.4.5+，必须已安装；目录 `~/.agents/skills/dashi-ppt`）
+- **`dashi-ppt`（可选，按需下载）**：用户选 Dashi 方式时，运行时从 `npx dashi-ppt-skill@latest` 或 `https://github.com/chuspeeism/dashi-ppt-skill` 下载安装，**不随本包分发**
 
 ## 9. 参考文件
 
 - `references/html-output-spec.md` — HTML 成果物导出规范（备用）
 - `examples/example-pitch.md` — 六页大纲输出样例
-- Dashi PPT 使用详见 `dashi-ppt` 的 `SKILL.md`
+- Dashi PPT 使用详见 `dashi-ppt` 的 `SKILL.md`（下载后）
 
 ## 10. Changelog
 
 - 1.0 依「8个Skill工作流设计V2」新建：M7 路演生成，五段结构 + 人改写 + 演练反馈 + 讲稿底稿。
-- **2.0 依用户测试反馈**：①**整合 Dashi PPT Skill（dashi-ppt）**——定稿后调用其生成浏览器可编辑的 HTML 路演 PPT（可导出 PPTX/PDF），并启动本地预览；②**页数固定 6 页**（首页 + 真实问题/解决方案/产品演示/创新价值/资源诉求），不可增删；③补充 JSON 无 BOM 编码、Dashi 校验、预览启动等执行细节。
+- **2.0 依用户测试反馈**：①整合 Dashi PPT Skill（dashi-ppt）——定稿后调用其生成浏览器可编辑的 HTML 路演 PPT（可导出 PPTX/PDF），并启动本地预览；②页数固定 6 页，不可增删；③补充 JSON 无 BOM 编码、Dashi 校验、预览启动等执行细节。
+- **2.1 依用户反馈**：①**dashi-ppt 不再随包嵌入**（压缩后不可用），改为**做 PPT 时先询问用户选择方式**（A. Dashi PPT Skill 运行时下载 / B. WorkBuddy 自带 PPT skill / 其它）；②选 Dashi 时按需从官方源下载（`npx dashi-ppt-skill@latest` 或 GitHub `chuspeeism/dashi-ppt-skill`）；③更新自检与追问路由。
