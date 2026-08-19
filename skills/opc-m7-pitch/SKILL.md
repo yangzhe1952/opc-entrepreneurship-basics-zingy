@@ -8,7 +8,7 @@ description: >
   核心理念：AI 只给大纲与要点，故事与语言必须是人的；AI 不得生成"可照读的成品讲稿"。
   适用于 OPC M7 路演、结课展示、双创比赛。
   触发：路演、PPT大纲、路演大纲、演讲稿、五段、M7、讲稿、做PPT。
-version: "2.1"
+version: "2.2"
 status: beta
 ---
 
@@ -148,6 +148,8 @@ status: beta
 > ⚠️ **页数硬性**：goal.json 恰好 6 个 slide，对应 §3 六页。
 > ⚠️ **不嵌入原则**：dashi-ppt **不随本 skill 包分发**（压缩后不可用），始终在需要时从官方源下载。
 
+**→ 生成后询问：**「是否需要修改，还是进入下一个模块（M8 资产整理）？」**
+
 ---
 
 ## 5. 输出格式
@@ -218,3 +220,4 @@ status: beta
 - 1.0 依「8个Skill工作流设计V2」新建：M7 路演生成，五段结构 + 人改写 + 演练反馈 + 讲稿底稿。
 - **2.0 依用户测试反馈**：①整合 Dashi PPT Skill（dashi-ppt）——定稿后调用其生成浏览器可编辑的 HTML 路演 PPT（可导出 PPTX/PDF），并启动本地预览；②页数固定 6 页，不可增删；③补充 JSON 无 BOM 编码、Dashi 校验、预览启动等执行细节。
 - **2.1 依用户反馈**：①**dashi-ppt 不再随包嵌入**（压缩后不可用），改为**做 PPT 时先询问用户选择方式**（A. Dashi PPT Skill 运行时下载 / B. WorkBuddy 自带 PPT skill / 其它）；②选 Dashi 时按需从官方源下载（`npx dashi-ppt-skill@latest` 或 GitHub `chuspeeism/dashi-ppt-skill`）；③更新自检与追问路由。
+- **2.2（统一）**：版本统一为 2.2；PPT 生成后询问「是否需要修改，还是进入下一个模块（M8）」。
