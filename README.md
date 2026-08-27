@@ -1,28 +1,30 @@
 # OPC 创业基础课 · 8 个 Skill 安装包
 
-**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块。
+**opc-entrepreneurship-basics-zingy** — OPC（One Person Company）创业基础课的全套人机协同 Skill，覆盖 M1–M8 八个教学模块，**全部为单人模式**（一人一产品，Work alone together）。
 
-## 包含的 Skill（v0.9 · 已对齐 2026-08 最新版）
+## 包含的 Skill（v2.5）
 
 | Skill | 模块 | 输入 → 输出 | 使用主体 |
 |-------|------|-------------|----------|
-| opc-m1-track-analysis | M1 赛道分析 | 行业 → 行业分析报告 → 备选赛道 → **赛道画像（五要素）** | 小组 |
+| opc-m1-track-analysis | M1 赛道分析 | 行业 → 行业分析报告 → 备选赛道 → **赛道画像（五要素）** | 个人 |
 | opc-m2-track-profile | M2 真实问题定义 | 赛道画像 → 赛道深度分析 → 真实语料 → **20 条痛点** → **HMW 问题卡** | 个人 |
-| opc-m3-solution-design | M3 方案生成 | HMW → 4–6 候选方案（四维评分）→ **3 核心功能（产品任务书）** | 个人 |
-| opc-m4-requirements | M4 需求梳理 | 产品任务书 → 10 题探索 → **八大字段需求文档**（可交秒哒） | 个人 |
+| opc-m3-solution-design | M3 方案生成 | HMW → 6 候选方案（四维评分）→ **3 核心功能（产品任务书）** | 个人 |
+| opc-m4-requirements | M4 需求梳理 | 产品任务书 → 10 题探索 → **八大字段需求文档**（可直接交秒哒） | 个人 |
 | opc-m5-ai-testing | M5 产品测试 | 产品链接 → AI 模拟测试 + **人测试** → **双源四象限测试报告** | 个人 |
-| opc-m6-iteration | M6 迭代执行 | 测试反馈 → 人决策 → **V0.2 迭代说明 + 秒哒指令** | 个人 |
-| opc-m7-pitch | M7 路演生成 | 前序成果物 → **6 页路演 PPT**（生成时询问选 Dashi 或 WorkBuddy 自带） | 个人 |
-| opc-m8-assets | M8 资产整理 | M1–M7 → **HTML 项目档案 + 个人反思** | 个人 |
+| opc-m6-iteration | M6 迭代执行 | 测试反馈 → 人决策 → **V0.2 迭代说明 + 秒哒可复制指令** | 个人 |
+| opc-m7-pitch | M7 路演生成 | 前序成果物 → **8 页路演 HTML PPT + 演讲稿底稿** | 个人 |
+| opc-m8-assets | M8 资产整理 | M1–M7 → **HTML 项目档案（各模块二级页内嵌）+ 个人反思** | 个人 |
 
-> **一人一产品**：M1 小组共同选赛道；M2 起每人独立做自己的产品（Work alone together）。M1 赛道可行性标准为"一人当天能做出 V0.1"（秒哒等无代码平台 30 分钟可出原型）。
+> **一人一产品**：M1 从"你选择的行业"出发，到 M8 归档全程独立完成；赛道可行性标准为"一人当天能做出 V0.1"（秒哒等无代码平台 30 分钟可出原型）。
 
 ## 设计理念
 
 - **人机协同**：每个 Skill = 分段生成 + 人机多轮交互（A 开场收集 / B 中间选择 / C 反馈修正 / D 确认定稿）
 - **AI 只做执行层，人做判断层**：AI 检索/生成/整理，人选择/判断/创造/反思；AI 不替人决策，最终由人落笔署名
-- **强制联网检索**：M1/M2/M3 需联网获取真实数据，证据分级 E1/E2/E3，数据可追溯
-- **HTML 成果物 Awwwards 级**：所有模块定稿后导出精美 HTML（Lucide 图标、深色沉浸风、滚动动效），底部落款「子谦国际 OPC 创业基础」
+- **强制联网检索**：M1/M2/M3 必须联网获取真实数据，证据分级 E1/E2/E3，数据可追溯、可标注
+- **反思必问·固定句式**：M1–M7 定稿后、生成 HTML 前，各模块 3 个反思问题**原封不动必问**（不改、不减、不增），人的回答随成果物呈现
+- **HTML 视觉规范 V3（主题色个性化）**：所有模块定稿后自动导出 Awwwards 级 HTML——按产品/行业语义派生**专属主题色**（不做千篇一律的深色页面），Lucide 图标、滚动动效、UTF-8 无乱码，底部落款「子谦国际 OPC 创业基础」
+- **M8 单文件提交**：M1–M7 完整 HTML 内嵌为二级页面（隐藏块 + 全屏弹层），交作业只需提交 M8 一个文件
 
 ## 快速安装（新电脑 / WorkBuddy）
 
@@ -57,26 +59,25 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 
 把 `skills\` 里的 8 个文件夹复制到你的 agent 的 skills 目录即可，重启生效。
 
-## M7 路演 PPT：可选安装 Dashi PPT Skill
+## M7 路演 PPT：3 种生成方式，按需选择
 
 `opc-m7-pitch` 生成 PPT 时会**先询问你选择哪种方式**：
-- **A. Dashi PPT Skill**（开源 PPT 生成器，浏览器可编辑、可导出 PPTX）——**按需下载，不随本包分发**
-- **B. WorkBuddy 自带的做 PPT Skill**（如环境已有）
+- **A. 沿用各模块 HTML 风格 · 16:9 翻页版（推荐）**：纯 HTML 单文件、内联 CSS、键盘/点击翻页、无需联网，与其他模块成果物同视觉风格
+- **B. dashi-ppt-skill**（开源，浏览器可编辑、可导出 PPTX/PDF）——**按需下载，不随本包分发**
+- **C. guizang-ppt-skill**（开源）——**按需下载，不随本包分发**
 
-若选 A，在目标机器上运行（需要 Node 20+）：
+若选 B 或 C，在目标机器上运行下载指令（需要 Node 20+），详见 skill 内的安装说明：
 
 ```powershell
 npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest
 ```
 
-或手动安装：`https://github.com/chuspeeism/dashi-ppt-skill`
-
-导出 PPTX/PDF 需要本机 Chrome/Edge。
+或手动安装：`https://github.com/chuspeeism/dashi-ppt-skill` / `https://github.com/op7418/guizang-ppt-skill`
 
 ## 环境要求
 
 - M1/M2/M3 需要 **WebSearch / WebFetch** 能力（联网检索真实数据）
-- M7 选 Dashi 时：Node.js 20+ 和 npm；Chrome / Edge（导出 PPTX/PDF）
+- M7 选 B/C 时：Node.js 20+ 和 npm；Chrome / Edge（导出 PPTX/PDF）
 
 ## 来源
 
