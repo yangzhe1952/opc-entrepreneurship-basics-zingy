@@ -7,7 +7,7 @@ description: >
   核心理念：AI 只做整理，人检查内容与写方法论与反思；反思是全程唯一纯粹的个性化输出，AI 不得代写。
   适用于 OPC M8 结课归档、项目复盘、展示材料汇总。
   触发：资产整理、项目档案、归档、成果物汇总、反思、方法论、M8。
-version: "2.2"
+version: "2.5"
 status: beta
 ---
 
@@ -61,7 +61,7 @@ status: beta
 | **6** | AI | **人提交完成后**，融合全部内容生成**最终项目档案 HTML**：基本信息/时间线/成果物/关键决策/**各模块反思**/方法论/个人成长 + **M1–M7 HTML iframe 内嵌为二级页面**，截图压缩，**总大小 ≤5MB** | 最终档案 HTML |
 | **7-D** | 人 | **检查最终 HTML（含二级页面可打开、总大小合规），确认定稿** | 成果物落笔 |
 
-**越界红线**：AI 不得替人写方法论与反思；反思内容必须是人的真实经历；**人提交方法论与反思完成前，不得生成最终 HTML**；**最终 HTML 超过 5MB 不得交付，须压缩/删减截图直至达标**。
+**越界红线**：AI 不得替人写方法论与反思；反思内容必须是人的真实经历；**人提交方法论与反思完成前，不得生成最终 HTML**；**最终 HTML 超过 5MB 不得交付，须压缩/删减截图直至达标**；**M1–M7 完整 HTML 只许存入 `text/template` 隐藏块，禁止平铺正文、禁止用 JS 模板字符串存放**。
 
 ---
 
@@ -83,7 +83,7 @@ status: beta
 
 **② 成果物清单（8 成果物，两列 4 行）**：不是跳转链接，而是**每个模块成果物的内容直现**——从成果物内容提炼要点，用**关键词卡 / 画布 / 小图表**呈现。8 个成果物：M1 赛道画像 / M2 HMW问题卡 / M3 产品任务书 / M4 需求文档 / M5 测试报告 / M6 迭代说明 / M7 路演 PPT / M8 个人反思。
 
-**③ 关键决策记录要点**：从各模块成果物中提炼**人做选择与决策的关键内容**（如 M1 小组选赛道的理由、M2 选定细分的理由、M3 四维评分与 Yes and 点子、M6 决定改什么及为什么），作为 Step 4 骨架的素材。
+**③ 关键决策记录要点**：从各模块成果物中提炼**人做选择与决策的关键内容**（如 M1 选赛道的理由、M2 选定细分的理由、M3 四维评分与 Yes and 点子、M6 决定改什么及为什么），作为 Step 4 骨架的素材。
 
 **④ 各模块反思**：从 M1–M7 各模块 HTML/成果物中提取 **3 个反思问答**，随档案呈现（M8 不新增反思，直接用各模块已有反思）。
 
@@ -121,7 +121,7 @@ status: beta
 - 方法论与 4F 反思以人提交内容为准，原样呈现
 - 基本信息放产品截图（**压缩后内嵌**）
 - **各模块反思**：M1–M7 三个反思问答汇总呈现
-- **M1–M7 二级页面**：把 M1–M7 各模块 HTML **用 iframe 内嵌到最终 M8 HTML**（`<iframe srcdoc="…">` 或 blob/data 方式，点击卡片弹层/展开查看该模块完整 HTML），**M8 单文件即可查看全部模块**
+- **M1–M7 二级页面**：把 M1–M7 各模块 HTML **用 `<script type="text/template">` 隐藏块 + iframe srcdoc 内嵌**为二级页面（实现模板见 §4），点击卡片全屏弹层查看完整模块 HTML，**M8 单文件即可查看全部模块**。**M1–M7 完整 HTML 只允许放进隐藏块，禁止平铺进页面正文**（否则页面被拉成超长卷轴、结构碎裂）
 - 内容体现个性化，让档案完整展示这一项目的全过程与个人思考
 
 **5MB 硬性控制（生成后必须自检）**：
@@ -135,7 +135,7 @@ status: beta
 
 人检查最终 HTML（含二级页面可打开、总大小 ≤5MB），确认定稿。
 
-**HTML 成果物（自动生成）**：确认后**自动生成**（按 `references/html-output-spec.md`）自包含 HTML（单文件、内联 CSS、底部小字「子谦国际 OPC 创业基础」），供直接保存提交。生成后询问：**「是否需要修改？确认后即完成结课归档。」**（M8 为最后模块，无下一个模块）
+**HTML 成果物（自动生成）**：确认后**自动生成**（按 `references/html-output-spec.md` V3——**生成前先读该规范**；主题色按本模块产品/行业语义 + 人选风格派生，不固定黑底金色；`<meta charset="UTF-8">` 置于 `<head>` 第一行、全篇禁 emoji/特殊符号，交付提示保存为 UTF-8）自包含 HTML（单文件、内联 CSS、底部小字「子谦国际 OPC 创业基础」），供直接保存提交。生成后询问：**「是否需要修改？确认后即完成结课归档。」**（M8 为最后模块，无下一个模块）
 
 ---
 
@@ -158,7 +158,7 @@ status: beta
 <div class="screenshots">…产品截图（压缩后内嵌，2–4 张，横向排列）…</div>
 <ul>
   <li>项目名称：{产品名}</li>
-  <li>作者 / 小组：{姓名 / 小组编号}</li>
+  <li>作者：{姓名}</li>
   <li>完成时间：{实际时间，按成果物时间戳}</li>
   <li>选定赛道：{赛道}</li>
   <li>细分领域：{细分领域}</li>
@@ -206,7 +206,7 @@ status: beta
 
 <h2>4. 关键决策记录（详细，含人的理由与点子）</h2>
 <ul>
-  <li>M1：选择{赛道}——{小组定稿理由（原样呈现）}</li>
+  <li>M1：选择{赛道}——{你的定稿理由（原样呈现）}</li>
   <li>M2：选择{细分领域}——{人选定理由（原样呈现）}；HMW 定稿：{人自己手写的 HMW，原样呈现}</li>
   <li>M3：选择{方案}——{人四维评分选定理由（原样呈现）}；共创点子：{三轮 Yes and 的人的点子逐条呈现}</li>
   <li>M6：优先改进{问题}——{人决策"改/不改/为什么"（原样呈现）}</li>
@@ -229,30 +229,53 @@ status: beta
 <h3>Findings 发现</h3><p>{人填写：学到了什么 / 新认识}</p>
 <h3>Future 未来</h3><p>{人填写：以后怎么做 / 想尝试什么}</p>
 
-<!-- M1–M7 二级页面：iframe 内嵌弹层 -->
-<div class="modal" id="moduleModal">
-  <iframe id="moduleFrame" src="about:blank"></iframe>
-  <button onclick="closeModal()">关闭</button>
+<!-- M1–M7 二级页面：text/template 隐藏块 + 全屏弹层（点击卡片 openModule(n) 查看完整模块 HTML） -->
+<style>
+  .mmodal{display:none; position:fixed; inset:0; z-index:999; background:rgba(0,0,0,.72);
+    align-items:center; justify-content:center; padding:2vh 2vw;}
+  .mmodal.show{display:flex;}
+  .mmodal .mmodal-box{width:96vw; height:96vh; background:#fff; border-radius:12px; overflow:hidden;
+    position:relative; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.5);}
+  .mmodal iframe{flex:1; width:100%; border:0; background:#fff;}
+  .mmodal .mmodal-close{position:absolute; top:10px; right:14px; z-index:2; cursor:pointer;
+    border:0; border-radius:8px; padding:8px 16px; background:#e8e8e8; color:#222; font-size:14px;}
+  /* 隐藏块中的完整 HTML 不渲染，不占用页面高度 */
+  script[type="text/template"]{display:none;}
+</style>
+
+<script type="text/template" id="m1">{M1 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m2">{M2 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m3">{M3 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m4">{M4 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m5">{M5 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m6">{M6 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+<script type="text/template" id="m7">{M7 完整 HTML，块内所有 </script> 写成 <\/script>}</script>
+
+<div class="mmodal" id="moduleModal">
+  <div class="mmodal-box">
+    <button class="mmodal-close" onclick="closeModal()">关闭</button>
+    <iframe id="moduleFrame" src="about:blank"></iframe>
+  </div>
 </div>
+
 <script>
-// 每个模块完整 HTML 用 srcdoc 内嵌；点击 openModule(n) 弹层展示
-const MODULES = {
-  1: { title: "M1 赛道画像", html: `{M1 完整 HTML 内容}` },
-  2: { title: "M2 HMW问题卡", html: `{M2 完整 HTML 内容}` },
-  3: { title: "M3 产品任务书", html: `{M3 完整 HTML 内容}` },
-  4: { title: "M4 需求文档", html: `{M4 完整 HTML 内容}` },
-  5: { title: "M5 测试报告", html: `{M5 完整 HTML 内容}` },
-  6: { title: "M6 迭代说明", html: `{M6 完整 HTML 内容}` },
-  7: { title: "M7 路演 PPT", html: `{M7 完整 HTML 内容}` }
-};
-function openModule(n){ const m=MODULES[n]; document.getElementById('moduleFrame').srcdoc=m.html; document.getElementById('moduleModal').style.display='block'; }
-function closeModal(){ document.getElementById('moduleModal').style.display='none'; }
+// 每个模块 HTML 存于 <script type="text/template"> 隐藏块（JS 直接读 el.textContent，不碰反引号/${}）
+function openModule(n){
+  const el = document.getElementById('m'+n);
+  if(!el){ alert('该模块没有可展示的 HTML'); return; }
+  document.getElementById('moduleFrame').srcdoc = el.textContent;
+  document.getElementById('moduleModal').classList.add('show');
+}
+function closeModal(){ document.getElementById('moduleModal').classList.remove('show'); }
 </script>
 </body>
 </html>
 ```
 
-> **iframe 内嵌注意**：M1–M7 HTML 用 `<iframe srcdoc="…">` 注入，避免样式冲突；若模块 HTML 较大，可将 html 以 `&lt;` 转义或 base64 内嵌。**保证单文件可打开，无需联网。**
+> **M1–M7 内嵌三条铁律（违反即返工）**：
+> 1. **只准放隐藏块**：M1–M7 完整 HTML 全部放进 `<script type="text/template" id="m{1~7}">…</script>` 隐藏块，**禁止平铺进页面正文**（会导致整页超长、结构崩坏）；**禁止**塞进 JS 模板字符串 `` `…` ``（模块自带的 `</script>`、反引号、`${}` 会截断/炸掉 M8 主脚本，导致点不开、点开空白）。
+> 2. **`</script>` 必须转义**：隐藏块内所有 `</script>`（含模块 JS 字符串里的）一律写成 `<\/script>`（浏览器正常识别），否则会提前关闭 M8 主脚本、点击失效。
+> 3. **读法与弹层**：用 `el.textContent` 取值 → `iframe.srcdoc = 内容`；弹层 `fixed` 全屏 + iframe 铺满（96vw × 96vh）、默认 `display:none`，点击卡片弹出、关闭按钮收起。若模块 HTML 本身超长，在 iframe 内滚动即可，**不能把整页拖长**。
 
 ---
 
@@ -265,12 +288,16 @@ function closeModal(){ document.getElementById('moduleModal').style.display='non
 - [ ] **项目时间线按实际完成时间生成**（1 天 / 2 天以实际为准，未套固定模板）？
 - [ ] **成果物清单为 8 成果物、两列 4 行、内容直现**（关键词/画布/图表，非跳转链接）？
 - [ ] **各模块反思（M1–M7 三个反思问答）已随档案呈现**？
-- [ ] **M1–M7 HTML 已 iframe 内嵌为二级页面**（点击可查看完整模块，M8 单文件可打开全部）？
+- [ ] **M1–M7 HTML 已内嵌为二级页面**（点击卡片可查看完整模块，M8 单文件可打开全部）？
+- [ ] **M1–M7 完整 HTML 全部存于 `<script type="text/template">` 隐藏块，未平铺进正文**（页面不因模块变长）？
+- [ ] **隐藏块内所有 `</script>` 已写成 `<\/script>`**（未截断 M8 主脚本，7 张卡片点击都能弹出、无空白）？
+- [ ] **弹层 fixed 全屏 + iframe 固定宽高**（96vw×96vh）、默认隐藏、关闭按钮正常、未用 JS 模板字符串存放模块 HTML？
 - [ ] **最终 HTML 总大小 ≤5MB**（截图已压缩；超限已按规则删减）？
 - [ ] **方法论与 4F 反思由人先提交，提交完成前未生成最终 HTML**？
 - [ ] 方法论与反思由人书写（AI 未代写），4F 含事实/感受/发现/未来四维度？
 - [ ] **HTML 尽量详细**，体现人做选择与决策的关键内容（理由、Yes and 点子等）？
 - [ ] 输出为 HTML 格式，含基本信息/时间线/成果物清单/关键决策/方法论/个人成长
+- [ ] **HTML 已对照 html-output-spec V3 §6 自检**：用了独特主题色（非黑底黄金）、UTF-8 保存提示、无 emoji/特殊符号、底部落款
 
 ---
 
@@ -306,3 +333,4 @@ function closeModal(){ document.getElementById('moduleModal').style.display='non
 - **2.2（统一）**：版本统一为 2.2；HTML 档案定稿后自动生成，生成后询问「是否需要修改？确认后完成归档」（M8 为最后模块）。
 - **2.2（追加）**：①开场收集新增**产品截图**（放 1.基本信息）；②档案结构重构为**六大部分**：1.基本信息（含截图）/ 2.时间线 / 3.成果物 / 4.关键决策 / 5.**方法论** / 6.**个人成长（4F 反思）**——方法论与 4F 反思**由人先提交**，提交完成前不生成最终 HTML；③**HTML 尽量详细**，完整呈现人做选择与决策的关键内容（人说的理由、M3 三轮 Yes and 点子等个性化内容）。
 - **2.2（追加）**：**M8 最终 HTML 大调整**——①新增 **各模块反思**（M1–M7 三个反思问答汇总呈现）；②**M1–M7 各自 HTML 完整内嵌为二级页面**（iframe srcdoc，点击卡片弹层查看），**提交作业只需交 M8 一个文件**，教师点击即可看全部模块；③**总大小 ≤5MB 硬性要求**——截图压缩内嵌，超限按"压缩→删截图→删内嵌图片"删减，禁止超限交付。
+- **2.5（内嵌方案加固）**：修复 M1–M7 二级页面「点不开/点开空白/页面超长」三类故障——①M1–M7 完整 HTML 改存入 `<script type="text/template">` 隐藏块（**不再用 JS 模板字符串**，根除 `</script>` 提前截断主脚本、反引号/`${}` 冲突）；②隐藏块内 `</script>` 一律写成 `<\/script>`；③弹层改 fixed 全屏 + iframe 96vw×96vh 固定尺寸；④写死禁止「平铺正文 / 模板字符串存 HTML」；⑤新增对应自检；⑥M1 单人化后作者字段改「姓名」，关键决策理由改单人措辞。
