@@ -145,11 +145,169 @@ status: beta
 
 **选 A（推荐 · 沿模块 HTML 风格 16:9 翻页版）**：
 
-- 按 `references/html-output-spec.md` V3 的视觉风格生成**自包含 HTML PPT**——**生成前先读该规范**；主题色按本模块产品/行业语义 + 人选风格派生，不固定黑底金色；`<meta charset="UTF-8">` 置于 `<head>` 第一行、全篇禁 emoji/特殊符号，交付提示保存为 UTF-8；底部小字「子谦国际 OPC 创业基础」
-- **16:9 画幅**：每页 `.slide{width:1280px;height:720px}` 或等比，用固定容器 + `transform:scale()` 适配屏幕
-- **翻页形式**：键盘 ←/→、空格、点击按钮翻页；底部页码指示；全屏按钮
-- **恰好 8 页**，对应 §3 八页结构；首页放主张大字，六段用要点卡片，结束页收尾
-- 保存为 `{产品名}-路演.html`，浏览器直接打开即可演示
+> 🔒 **硬性铁律（违反即返工）**：选 A 时**必须原样使用下面这份完整模板**，只替换 `{…}` 占位内容，**不得删改任何结构/CSS/JS、不得新增脚本、不得重新设计翻页逻辑**。模板已内置全部交互，AI 只负责填内容。
+
+- **必须保留的功能（模板已内置，缺失任一即返工）**：键盘 ←/→/空格/翻页键翻页、左右箭头按钮、底部圆点导航、`N / 8` 页码指示、**右上角「全屏」放大按钮**、底部落款「子谦国际 OPC 创业基础」
+- **编码**：`<meta charset="UTF-8">` 置于 `<head>` 第一行；全篇禁 emoji/特殊符号；交付时提示用户「保存为 `{产品名}-路演.html`，编码务必选 UTF-8（记事本→文件→另存为→编码选 UTF-8），用浏览器打开」——若打开乱码，是保存编码问题，重新以 UTF-8 保存即可
+- **主题色**：只改 `:root` 里的 5 个色值，按产品/行业语义派生（不固定黑底金色）
+- **恰好 8 页**：模板 8 个 `.slide` 区块对应 §3 八页，不得增删页
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{产品名} · 路演</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --bg:#11130f; --ink:#f5f2ea; --dim:#a9a493; --accent:#7fae5a; --accent2:#d8c27a;
+  --line:rgba(245,242,234,.14); --accent-soft:rgba(127,174,90,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif}
+.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 20% 0%,var(--accent-soft),transparent 55%),var(--bg)}
+.stage{width:1280px;height:720px;position:relative;flex:0 0 auto;transform-origin:center}
+.slide{position:absolute;inset:0;display:none;padding:64px 84px;flex-direction:column;justify-content:center}
+.slide.active{display:flex}
+.slide .no{position:absolute;top:28px;left:40px;font-size:14px;letter-spacing:2px;color:var(--dim)}
+.slide .tag{color:var(--accent);font-size:15px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px}
+.slide h1{font-size:clamp(40px,6vw,84px);line-height:1.1;font-weight:800}
+.slide h2{font-size:clamp(30px,4.4vw,54px);line-height:1.15;font-weight:800;margin-bottom:22px}
+.slide p{font-size:clamp(18px,1.9vw,26px);line-height:1.7;color:var(--dim);max-width:1100px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+.card{background:var(--accent-soft);border:1px solid var(--line);border-radius:14px;padding:22px 20px}
+.card b{display:block;color:var(--accent2);margin-bottom:8px;font-size:18px}
+.card span{font-size:15px;color:var(--dim);line-height:1.6}
+.nav{position:fixed;top:50%;transform:translateY(-50%);z-index:20;width:52px;height:52px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(0,0,0,.35);color:var(--ink);font-size:26px;cursor:pointer}
+.nav:hover{background:var(--accent);color:#000}
+.nav.prev{left:22px}
+.nav.next{right:22px}
+.pager{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:20;font-size:15px;letter-spacing:1px;color:var(--dim)}
+.fs{position:fixed;top:22px;right:24px;z-index:20;padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(0,0,0,.35);color:var(--ink);font-size:14px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.fs:hover{background:var(--accent);color:#000}
+.dots{position:fixed;bottom:22px;right:30px;z-index:20;display:flex;gap:8px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer}
+.dots i.on{background:var(--accent);transform:scale(1.3)}
+.footer{position:fixed;bottom:22px;left:30px;z-index:20;font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="stage" id="stage">
+    <section class="slide active">
+      <div class="no">01</div>
+      <div class="tag">OPC 结课路演</div>
+      <h1>{产品名}</h1>
+      <p>{一句话主张}</p>
+    </section>
+    <section class="slide">
+      <div class="no">02</div>
+      <div class="tag">真实问题</div>
+      <h2>{目标用户 + 场景 + 痛点 + HMW}</h2>
+    </section>
+    <section class="slide">
+      <div class="no">03</div>
+      <div class="tag">解决方案</div>
+      <h2>{一句话方案}</h2>
+      <div class="cards">
+        <div class="card"><b>{功能一}</b><span>{…}</span></div>
+        <div class="card"><b>{功能二}</b><span>{…}</span></div>
+        <div class="card"><b>{功能三}</b><span>{…}</span></div>
+      </div>
+    </section>
+    <section class="slide">
+      <div class="no">04</div>
+      <div class="tag">产品演示</div>
+      <h2>{现场演示内容}</h2>
+      <p>{打开路径 / 演示哪个功能 / 备用方案}</p>
+    </section>
+    <section class="slide">
+      <div class="no">05</div>
+      <div class="tag">创新价值</div>
+      <h2>{3 创新点}</h2>
+      <p>{对比表达}</p>
+    </section>
+    <section class="slide">
+      <div class="no">06</div>
+      <div class="tag">迭代计划</div>
+      <h2>{下一步迭代方向}</h2>
+      <p>{为什么 / 往哪发展}</p>
+    </section>
+    <section class="slide">
+      <div class="no">07</div>
+      <div class="tag">资源诉求</div>
+      <h2>{需要什么}</h2>
+      <p>{三大资源支撑 + 合作方获得什么 + 号召}</p>
+    </section>
+    <section class="slide">
+      <div class="no">08</div>
+      <div class="tag">感谢</div>
+      <h2>{产品名}</h2>
+      <p>{一句话主张 + 感谢/号召}</p>
+    </section>
+  </div>
+
+  <button class="nav prev" id="prev" title="上一页">&lsaquo;</button>
+  <button class="nav next" id="next" title="下一页">&rsaquo;</button>
+  <div class="dots" id="dots"></div>
+  <div class="pager" id="pager"></div>
+  <button class="fs" id="fsBtn"><i data-lucide="maximize"></i> 全屏</button>
+  <div class="footer">子谦国际 OPC 创业基础</div>
+</div>
+
+<script>
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var dotsBox = document.getElementById('dots');
+var pager = document.getElementById('pager');
+var cur = 0;
+slides.forEach(function(s,i){
+  var d = document.createElement('i');
+  d.title = '第' + (i+1) + '页';
+  d.onclick = function(){ goTo(i); };
+  dotsBox.appendChild(d);
+});
+function updateDots(){
+  var ds = dotsBox.children;
+  for(var i=0;i<ds.length;i++){ ds[i].className = (i===cur) ? 'on' : ''; }
+  pager.textContent = (cur+1) + ' / ' + slides.length;
+}
+function goTo(i){
+  if(i<0 || i>=slides.length){ return; }
+  slides[cur].className = 'slide';
+  slides[i].className = 'slide active';
+  cur = i;
+  updateDots();
+}
+function go(dir){ goTo(cur+dir); }
+document.getElementById('prev').onclick = function(){ go(-1); };
+document.getElementById('next').onclick = function(){ go(1); };
+document.addEventListener('keydown', function(e){
+  if(e.key==='ArrowRight' || e.key===' ' || e.key==='PageDown'){ e.preventDefault(); go(1); }
+  else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); go(-1); }
+});
+function fit(){
+  var s = Math.min(window.innerWidth/1280, window.innerHeight/720);
+  document.getElementById('stage').style.transform = 'scale(' + s + ')';
+}
+window.addEventListener('resize', fit);
+fit();
+document.getElementById('fsBtn').onclick = function(){
+  if(document.fullscreenElement){ document.exitFullscreen(); }
+  else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen(); }
+};
+if(window.lucide){ lucide.createIcons(); }
+</script>
+</body>
+</html>
+```
+
+> 选 A 时：把上面模板**整份原样输出**，仅替换 `{…}` 占位内容与 `:root` 色值。生成后对照 §6 自检核对「翻页/全屏/页码/落款」四要素后再交付。
 
 **选 B（dashi-ppt-skill）**：
 
@@ -212,6 +370,8 @@ status: beta
 - [ ] **反思必问且固定**：3 个问题原封不动提出（未跳过、未删改、未新增、未加引导），人逐条全部回答后才生成 HTML，回答随 HTML 呈现？
 - [ ] **已先询问用户选哪种 HTML PPT 方式**（A 沿模块风格 / B dashi-ppt / C guizang-ppt），未擅自决定？
 - [ ] 选 A 时：**16:9 画幅 + 翻页交互 + 内联 CSS + 底部小字「子谦国际 OPC 创业基础」**，恰好 8 页？
+- [ ] **选 A 时按 SKILL 内置模板原样输出**（只替换 `{…}` 与 `:root` 色值，未删改结构/CSS/JS）？
+- [ ] **选 A 时四要素齐全**：键盘+按钮+圆点+页码翻页、右上角「全屏」按钮、`<meta charset="UTF-8">` 首行、底部落款？
 - [ ] **选 A 时 HTML 已对照 html-output-spec V3 §6 自检**：独特主题色（非黑底黄金）、UTF-8 保存提示、无 emoji/特殊符号、恰好 8 页？
 - [ ] 选 B（dashi-ppt）时：未装则运行时下载官方源，**不嵌入本包**；goal.json 用无 BOM UTF-8；渲染后通过 swiss + goal-copy 校验？
 - [ ] 选 C（guizang-ppt）时：按官方源运行时下载，**不嵌入本包**，按其工作流生成 8 页？
@@ -256,3 +416,4 @@ status: beta
 - **2.2（追加）**：M7 改为产出 **HTML 格式 PPT**（不再做 PPTX 演示版），提供 **3 种方式**：**A. 沿用各模块 HTML 风格 · 16:9 翻页版（推荐，内联 CSS 单文件、键盘/点击翻页）** / **B. dashi-ppt-skill**（`chuspeeism/dashi-ppt-skill`）/ **C. guizang-ppt-skill**（`op7418/guizang-ppt-skill`）；B/C 均运行时从官方源下载不随包分发；三种产出都恰好 6 页。
 - **2.2（追加）**：①**PPT 由 6 页扩为 7 页**——新增第 6 页「**迭代计划**」（首页/真实问题/解决方案/产品演示/创新价值/**迭代计划**/资源诉求，页数硬性 7 页）；②**Step 1-A 新增「迭代计划」开放提问**——问"接下来想迭代什么、往哪个方向发展"（承接 M6，讲下一步而非回顾），回答作为第 6 页素材；③自检/追问路由/输出格式同步更新。
 - **2.2（追加）**：①**PPT 由 7 页扩为 8 页**——新增第 8 页「**结束页**」（产品名 + 主张 + 感谢/号召，呼应首页；首页/真实问题/解决方案/产品演示/创新价值/迭代计划/资源诉求/**结束页**，页数硬性 8 页）；②**Step 7-D 后新增 Step 7.5 反思**——定稿后、生成 HTML 前提 3 个反思问题（哪页最满意/哪页改最多/向 AI 学什么），人回答后随 HTML 呈现；③自检/输出格式/交互总览同步更新。
+- **2.5（追加）**：**选 A 翻页版改为「内置完整模板 + 原样套用」**——修复翻页失效/无全屏按钮/页面乱码三类高频故障：①把可用的 8 页 16:9 翻页模板（键盘+按钮+圆点+页码翻页、全屏按钮、UTF-8、底部落款）整体内嵌进 Step 8，AI 只替换 `{…}` 内容与 `:root` 色值，禁止删改结构/JS/新增脚本；②自检新增「模板原样 + 四要素齐全」项。
