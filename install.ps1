@@ -38,6 +38,25 @@ $skills = @(
     "opc-m8-archive-generation"
 )
 
+# ---------- -Only：只安装指定模块 ----------
+if ($Only) {
+    $map = @{
+        "m1" = "opc-m1-track-analysis";      "m2" = "opc-m2-problem-definition"
+        "m3" = "opc-m3-solution-design";     "m4" = "opc-m4-requirements-analysis"
+        "m5" = "opc-m5-product-testing";     "m6" = "opc-m6-product-iteration"
+        "m7" = "opc-m7-product-pitch";       "m8" = "opc-m8-archive-generation"
+    }
+    $wanted = @()
+    foreach ($x in ($Only -split '\s*,\s*')) {
+        $k = $x.Trim().ToLower()
+        if ($map.ContainsKey($k)) { $wanted += $map[$k] }
+        elseif ($skills -contains $k) { $wanted += $k }
+        else { throw "未知的模块：$x（可用 m1–m8 或完整目录名，多个用英文逗号分隔）" }
+    }
+    $skills = @($skills | Where-Object { $wanted -contains $_ })
+    Write-Host "==> 仅安装指定模块：$($skills -join ', ')"
+}
+
 # ---------- 解析安装目标目录 ----------
 $targets = @()
 if ($Target -eq "auto") {
