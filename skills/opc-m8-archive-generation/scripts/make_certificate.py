@@ -12,6 +12,7 @@
 import argparse
 import os
 import sys
+import time
 from datetime import date
 
 import numpy as np
@@ -28,12 +29,11 @@ FONT_CANDIDATES = [
 ]
 
 # 标定常量（相对底图尺寸，底图更换时按百分比微调）
-FONT_RATIO = 0.024          # 字号 = 底图宽 * 比例
-LINE_HEIGHT_RATIO = 1.8     # 行高 = 字号 * 倍数
+FONT_RATIO = 0.024          # 正文字号 = 底图宽 * 比例
 TEXT_COLOR = (60, 60, 60)
+UNDERLINE_COLOR = (47, 125, 107)   # 姓名/学校下划线（子谦绿）
 MAX_WIDTH_RATIO = 0.76      # 每行最大宽度占底图宽比例
-GAP_BELOW_TITLE = 0.016     # 正文块顶部与标题区下缘的间距（占底图高）
-FALLBACK_TOP = 0.26         # 找不到标题时正文块顶部高度
+BLOCK_CENTER_Y = 0.50       # 文字块中心高度：页面正中
 
 
 def load_font(size):
@@ -89,30 +89,75 @@ def main():
     ap.add_argument("--school", required=True, help="学校名称")
     ap.add_argument("--name", required=True, help="学生姓名")
     ap.add_argument("--date", default=None, help="完成日期，格式 yyyy年m月d日，默认当天")
+    ap.add_argument("--product", default=None, help="产品名称（数智产品名）；缺省则证书不含该句")
     ap.add_argument("--out", default=None, help="输出 PNG 路径，默认 学习证书-<姓名>.png")
     a = ap.parse_args()
 
     d = a.date or f"{date.today().year}年{date.today().month}月{date.today().day}日"
-    text = f"兹证明 {a.school}　{a.name} 于 {d} 完成OPC创业基础课程（M1–M8）的学习与实践。特发此证，以资证明。"
 
     img = Image.open(TEMPLATE).convert("RGB")
     W, H = img.size
     draw = ImageDraw.Draw(img)
 
-    fs = max(28, int(W * FONT_RATIO))
-    font = load_font(fs)
-    lines = layout_lines(text, font, W * MAX_WIDTH_RATIO, draw)
+    fs_body = max(28, int(W * FONT_RATIO))
+    font_body = load_font(fs_body)
+    max_w = W * MAX_WIDTH_RATIO
 
-    line_h = int(fs * LINE_HEIGHT_RATIO)
+    # 文字布局（2026-10-04 依用户参考样张定稿）：
+    #   第 1 行：学校姓名（加大加粗，整条下划线，无"兹证明"）
+    #   第 2 行：于{日期}完成OPC创业基础课程（M1–M8）的学习与实践，
+    #   第 3 行：并开发出{产品名}数智产品。
+    #   第 4 行：特发此证，以资证明。
+    line1 = f"{a.school}{a.name}"
+    if a.product:
+        rows_body = [f"于{d}完成OPC创业基础课程（M1–M8）的学习与实践，",
+                     f"并开发出{a.product}数智产品。",
+                     "特发此证，以资证明。"]
+    else:
+        rows_body = [f"于{d}完成OPC创业基础课程（M1–M8）的学习与实践。",
+                     "特发此证，以资证明。"]
+
+    fs_name = int(fs_body * 1.35)
+    while fs_name > fs_body and draw.textlength(line1, font=load_font(fs_name)) > max_w:
+        fs_name -= 3  # 超长校名+姓名时逐步缩小，最低缩到正文字号
+    font_name = load_font(fs_name)
+    sw_name = max(2, int(fs_name * 0.028))  # 楷体无粗体，用同色描边模拟加粗
+
+    h1 = int(fs_name * 1.3)    # 行 1 占位（含下划线空间）
+    h2 = int(fs_body * 0.4)    # 行距
+    block = h1 + h2 + int(fs_body * 1.9) * len(rows_body)
+
     tb = find_title_bottom(img.convert("L"))
-    y0 = (tb + int(H * GAP_BELOW_TITLE)) if tb else int(H * FALLBACK_TOP)
-    for i, ln in enumerate(lines):
-        w = draw.textlength(ln, font=font)
-        draw.text(((W - w) / 2, y0 + i * line_h), ln, font=font, fill=TEXT_COLOR)
+    y0 = int(H * BLOCK_CENTER_Y) - block // 2
+    if tb and y0 <= tb + int(H * 0.02):
+        y0 = tb + int(H * 0.02)  # 安全兜底：不许顶到标题
+
+    w1 = draw.textlength(line1, font=font_name)
+    draw.text(((W - w1) / 2, y0), line1, font=font_name, fill=TEXT_COLOR,
+              stroke_width=sw_name, stroke_fill=TEXT_COLOR)
+    y_u = y0 + int(fs_name * 1.18)
+    pad = int(fs_name * 0.3)
+    draw.line([((W - w1) / 2 - pad, y_u), ((W + w1) / 2 + pad, y_u)],
+              fill=UNDERLINE_COLOR, width=max(4, int(fs_name * 0.05)))
+
+    y_row = y0 + h1 + h2
+    for ln in rows_body:
+        w = draw.textlength(ln, font=font_body)
+        draw.text(((W - w) / 2, y_row), ln, font=font_body, fill=TEXT_COLOR)
+        y_row += int(fs_body * 1.9)
 
     out = a.out or f"学习证书-{a.name}.png"
-    img.save(out, "PNG")
-    print(os.path.abspath(out))
+    tmp = out + ".part"
+    img.save(tmp, "PNG")
+    for _ in range(8):  # 目标文件可能正被图片查看器占用，等它释放
+        try:
+            os.replace(tmp, out)
+            print(os.path.abspath(out))
+            break
+        except OSError:
+            time.sleep(0.5)
+    else:
+        print(os.path.abspath(tmp) + "（目标被占用，内容已写到 .part 文件）")
 
 
 if __name__ == "__main__":
