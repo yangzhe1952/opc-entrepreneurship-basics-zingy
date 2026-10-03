@@ -6,8 +6,11 @@
 
 说明：
   - 底图：../assets/certificate-template.png（子谦国际证书底图，含标题与签章，本脚本不修改底图内容）
-  - 文字固定模板：兹证明 {学校}　{姓名} 于 {yyyy年m月d日} 完成OPC创业基础课程（M1–M8）的学习与实践。特发此证，以资证明。
-  - 文字位置已按底图标定：正文块位于标题区下方留白处，水平居中，楷体。
+  - 文字版式（2026-10-04 定稿）：第 1 行「{学校}{姓名}」加大加粗 + 子谦绿整线下划线（无"兹证明"）；
+    第 2 行「于{日期}完成OPC创业基础课程（M1–M8）的学习与实践，」；
+    第 3 行「并开发出{产品名}数智产品。」（未传 --product 时省略该行）；
+    第 4 行「特发此证，以资证明。」
+  - 输出与底图同分辨率的 PNG，并写入 300dpi 元数据（插入 Word 时尺寸正确）。
 """
 import argparse
 import os
@@ -44,29 +47,6 @@ def load_font(size):
             except Exception:
                 continue
     return ImageFont.load_default()
-
-
-def layout_lines(text, font, max_w, draw):
-    """整段放得下就一行；否则按固定语义拆行：兹证明…／于…实践。／特发此证…。"""
-    if draw.textlength(text, font=font) <= max_w:
-        return [text]
-    m1 = " 完成OPC创业基础课程"
-    m2 = "特发此证"
-    i1 = text.find(m1)
-    i2 = text.find(m2)
-    if i1 > 0 and i2 > i1:
-        return [text[:i1].strip(), text[i1:i2].strip(), text[i2:].strip()]
-    # 兜底：贪心按宽断行
-    lines, cur = [], ""
-    for ch in text:
-        if draw.textlength(cur + ch, font=font) > max_w:
-            lines.append(cur)
-            cur = ch
-        else:
-            cur += ch
-    if cur:
-        lines.append(cur)
-    return lines
 
 
 def find_title_bottom(img_gray):
@@ -148,7 +128,7 @@ def main():
 
     out = a.out or f"学习证书-{a.name}.png"
     tmp = out + ".part"
-    img.save(tmp, "PNG")
+    img.save(tmp, "PNG", dpi=(300, 300))
     for _ in range(8):  # 目标文件可能正被图片查看器占用，等它释放
         try:
             os.replace(tmp, out)

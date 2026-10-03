@@ -26,7 +26,7 @@ param(
 )
 $ErrorActionPreference = "Stop"
 
-# 8 个技能模块（每个都自包含：references\ + scripts\ + data\ 由 sync-references.ps1 分发）
+# 8 个技能模块（每个模块自包含：自带 references\；M8 另带 assets\ 证书底图与 scripts\ 证书脚本）
 $skills = @(
     "opc-m1-track-analysis",
     "opc-m2-problem-definition",
@@ -177,5 +177,5 @@ Remove-Item -LiteralPath $tmpRoot -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host ""
 Write-Host "完成！"
 Write-Host ""
-Write-Host "提示：每个技能模块都是自包含的（自带 references\ 与 scripts\），可单独安装使用。"
+Write-Host "提示：每个技能模块都是自包含的（自带 references\；M8 另带 assets\ 与 scripts\），可单独安装使用。"
 Write-Host "      若脚本或参考文件缺失，说明该模块被部分复制了，请重跑本脚本。"
