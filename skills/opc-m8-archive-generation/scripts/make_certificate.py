@@ -7,8 +7,8 @@
 说明：
   - 底图：../assets/certificate-template.png（子谦国际证书底图，含标题与签章，本脚本不修改底图内容）
   - 文字版式（2026-10-04 定稿）：第 1 行「{学校}{姓名}」加大加粗 + 子谦绿整线下划线（无"兹证明"）；
-    第 2 行「于{日期}完成OPC创业基础课程（M1–M8）的学习与实践，」；
-    第 3 行「并开发出{产品名}数智产品。」（未传 --product 时省略该行）；
+    第 2 行「于{日期}完成OPC创业基础课程的学习，共{课时}课时，」；
+    第 3 行「并开发出“{产品名}”数智产品。」（未传 --product 时省略该行）；
     第 4 行「特发此证，以资证明。」
   - 输出与底图同分辨率的 PNG，并写入 300dpi 元数据（插入 Word 时尺寸正确）。
 """
@@ -70,6 +70,7 @@ def main():
     ap.add_argument("--name", required=True, help="学生姓名")
     ap.add_argument("--date", default=None, help="完成日期，格式 yyyy年m月d日，默认当天")
     ap.add_argument("--product", default=None, help="产品名称（数智产品名）；缺省则证书不含该句")
+    ap.add_argument("--hours", default=None, help="课时数（如 8 / 16 / 其他数字）；缺省则证书不含课时句")
     ap.add_argument("--out", default=None, help="输出 PNG 路径，默认 学习证书-<姓名>.png")
     a = ap.parse_args()
 
@@ -89,12 +90,14 @@ def main():
     #   第 3 行：并开发出{产品名}数智产品。
     #   第 4 行：特发此证，以资证明。
     line1 = f"{a.school}{a.name}"
+    hours_clause = f"，共{a.hours}课时" if a.hours else ""
+    head = f"于{d}完成OPC创业基础课程的学习{hours_clause}"
     if a.product:
-        rows_body = [f"于{d}完成OPC创业基础课程（M1–M8）的学习与实践，",
-                     f"并开发出{a.product}数智产品。",
+        rows_body = [head + "，",
+                     f"并开发出“{a.product}”数智产品。",
                      "特发此证，以资证明。"]
     else:
-        rows_body = [f"于{d}完成OPC创业基础课程（M1–M8）的学习与实践。",
+        rows_body = [head + "。",
                      "特发此证，以资证明。"]
 
     fs_name = int(fs_body * 1.35)
